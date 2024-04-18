@@ -5,19 +5,25 @@ import com.lottog.purchaser.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class LoginService {
 
+    @Qualifier("loginInfoMap")
+    private final ConcurrentHashMap<String, LoginRequest> loginInfoMap;
+
     private static final String URL_LOGIN = "https://m.dhlottery.co.kr/user.do?method=loginm&returnUrl=https%3A%2F%2Fm.dhlottery.co.kr%2FuserSsl.do%3Fmethod%3DmyPage";
 
     private final SeleniumService seleniumService;
 
     /**
-     * 동행복권 로그인
+     * 동행복권 로그인 - 최초 시도
      * @param request 로그인 request DTO
      * @return 로그인 결과 response DTO
      */
@@ -43,14 +49,42 @@ public class LoginService {
             js = "check_if_Valid3();";
             seleniumService.execJS(js);
 
-            return seleniumService.checkLoginResult(); //로그인 결과 반환
+            //로그인 결과 반환
+            LoginResponse response = seleniumService.checkLoginResult();
+
+            if (response.success()) {
+                //로그인 성공 시, 로그인 정보 임시 저장
+                loginInfoMap.put(request.id(), request);
+            } else {
+                //로그인 실패 시, chrome driver 종료 및 리소스 반환 처리
+                seleniumService.closeWebDriver();
+            }
+
+            return response;
 
         } catch (Exception e) {
+            //예외 발생 시, chrome driver 종료 및 리소스 반환 처리
+            //로그인만 단독으로 사용되는 경우는 없으므로, 다른 작업이 밀리지 않도록 하기 위해 종료
+            seleniumService.closeWebDriver();
+
             log.error("=== [ERROR] doLogin() - {}", e.getMessage());
             throw new RuntimeException(e);
-
-        } finally {
-            seleniumService.closeWebDriver(); //성공이든 실패든 chrome driver 를 닫고 리소스를 반납한다.
         }
+    }
+
+    /**
+     * 동행복권 로그인 - 후행 작업을 위한 method
+     * @param id 로그인 id
+     * @return 로그인 결과 response DTO
+     */
+    public LoginResponse login(String id) {
+        //map 에서 id 를 이용해 이전 로그인 정보 조회
+        LoginRequest loginRequest = loginInfoMap.get(id);
+
+        if (loginRequest == null) {
+            return LoginResponse.fail("로그인 정보가 없습니다.");
+        }
+
+        return login(loginRequest);
     }
 }
