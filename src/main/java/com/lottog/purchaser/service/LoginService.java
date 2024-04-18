@@ -52,21 +52,14 @@ public class LoginService {
             //로그인 결과 반환
             LoginResponse response = seleniumService.checkLoginResult();
 
+            //로그인 성공 시, 로그인 정보 임시 저장
             if (response.success()) {
-                //로그인 성공 시, 로그인 정보 임시 저장
                 loginInfoMap.put(request.id(), request);
-            } else {
-                //로그인 실패 시, chrome driver 종료 및 리소스 반환 처리
-                seleniumService.closeWebDriver();
             }
 
             return response;
 
         } catch (Exception e) {
-            //예외 발생 시, chrome driver 종료 및 리소스 반환 처리
-            //로그인만 단독으로 사용되는 경우는 없으므로, 다른 작업이 밀리지 않도록 하기 위해 종료
-            seleniumService.closeWebDriver();
-
             log.error("=== [ERROR] doLogin() - {}", e.getMessage());
             throw new RuntimeException(e);
         }

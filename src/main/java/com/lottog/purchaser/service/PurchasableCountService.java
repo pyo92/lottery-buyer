@@ -53,9 +53,7 @@ public class PurchasableCountService {
             return pc;
 
         } catch (Exception e) {
-            seleniumService.closeWebDriver();
-
-            log.error("=== getPurchasableCount() occurred error - {}", e.getMessage());
+            log.error("=== [ERROR] getPurchasableCount() occurred error - {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
