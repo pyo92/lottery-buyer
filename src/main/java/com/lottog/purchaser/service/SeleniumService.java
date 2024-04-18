@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -112,6 +113,26 @@ public class SeleniumService {
 
             } catch (TimeoutException e) {
                 log.warn("=== [WARNING] Css selector `{}` not found, retrying... ({}/{})", css, (i + 1), SELENIUM_RETRY_CNT);
+            }
+        }
+
+        throw new NoSuchElementException("Css selector `" + css + "` not found.");
+    }
+
+    /**
+     * Get web element by CSS selector (다중 객체)
+     * @param css CSS selector
+     * @return List of web element
+     */
+    public List<WebElement> getElementsByCssSelector(String css) {
+        for (int i = 0; i < SELENIUM_RETRY_CNT; i++) {
+            try {
+                return webDriverWait.until(
+                        ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(css))
+                );
+
+            } catch (TimeoutException e) {
+                log.warn("=== Css selector `{}` not found, retrying... ({}/{})", css, (i + 1), SELENIUM_RETRY_CNT);
             }
         }
 
