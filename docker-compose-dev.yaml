@@ -1,0 +1,20 @@
+version: "3.8"                                  # 파일 규격 버전
+services:                                       # 실행하려는 컨테이너들을 정의
+  selenium-lottery-purchaser:                   # 서비스명
+    container_name: selenium-lottery-purchaser  # 컨테이너 명
+    build:
+      dockerfile: Dockerfile
+      context: ./selenium
+    image: pyo92/selenium-lottery-purchaser
+    volumes:
+      - /dev/shm:/dev/shm
+    shm_size: 256mb
+    environment:
+      - SE_SCREEN_WIDTH=1024
+      - SE_SCREEN_HEIGHT=768
+      - SE_NODE_MAX_SESSIONS=1
+      - SE_NODE_SESSION_TIMEOUT=60
+    ports:
+      - "4445:4444"                             # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+      - "5901:5900"
+      - "7901:7900"

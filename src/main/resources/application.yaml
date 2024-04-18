@@ -1,4 +1,40 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+    group:
+      dev:
+        - common
+      prod:
+        - common
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
 server:
   error:
     whitelabel:
       enabled: false
+
+selenium:
+  hub:
+    url: ${SELENIUM_HUB_URL}
+  retry:
+    count: ${SELENIUM_RETRY_COUNT}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod

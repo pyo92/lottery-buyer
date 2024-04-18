@@ -5,16 +5,17 @@ plugins {
 }
 
 group = 'com.lotto-g'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    sourceCompatibility = '17'
-}
+version = 'v1.0'
+sourceCompatibility = '17'
 
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+}
+
+bootJar {
+    archiveFileName = 'lottery-purchaser.jar'
 }
 
 repositories {
@@ -23,6 +24,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.seleniumhq.selenium:selenium-java'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
