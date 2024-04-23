@@ -1,4 +1,4 @@
-package com.lottog.purchaser.dto.request;
+package com.lottog.buyer.dto.request;
 
 public record LoginRequest(
         String id,

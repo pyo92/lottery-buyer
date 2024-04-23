@@ -1,6 +1,6 @@
-package com.lottog.purchaser.service;
+package com.lottog.buyer.service;
 
-import com.lottog.purchaser.dto.response.PaymentResponse;
+import com.lottog.buyer.dto.response.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;

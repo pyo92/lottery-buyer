@@ -1,6 +1,6 @@
-package com.lottog.purchaser.controller;
+package com.lottog.buyer.controller;
 
-import com.lottog.purchaser.dto.response.ErrorResponse;
+import com.lottog.buyer.dto.response.ErrorResponse;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

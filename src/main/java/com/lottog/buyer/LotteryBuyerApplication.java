@@ -1,13 +1,13 @@
-package com.lottog.purchaser;
+package com.lottog.buyer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LotteryPurchaserApplication {
+public class LotteryBuyerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LotteryPurchaserApplication.class, args);
+        SpringApplication.run(LotteryBuyerApplication.class, args);
     }
 
 }
