@@ -15,7 +15,7 @@ configurations {
 }
 
 bootJar {
-    archiveFileName = 'lottery-purchaser.jar'
+    archiveFileName = 'lottery-buyer.jar'
 }
 
 repositories {
