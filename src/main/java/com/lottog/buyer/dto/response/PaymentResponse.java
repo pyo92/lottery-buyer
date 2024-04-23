@@ -1,4 +1,4 @@
-package com.lottog.purchaser.dto.response;
+package com.lottog.buyer.dto.response;
 
 public record PaymentResponse(
         String name,

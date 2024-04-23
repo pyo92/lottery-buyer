@@ -1,6 +1,6 @@
-package com.lottog.purchaser.config;
+package com.lottog.buyer.config;
 
-import com.lottog.purchaser.dto.request.LoginRequest;
+import com.lottog.buyer.dto.request.LoginRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

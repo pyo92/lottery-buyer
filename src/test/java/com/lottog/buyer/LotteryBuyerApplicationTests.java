@@ -1,10 +1,10 @@
-package com.lottog.purchaser;
+package com.lottog.buyer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LotteryPurchaserApplicationTests {
+class LotteryBuyerApplicationTests {
 
     @Test
     void contextLoads() {
