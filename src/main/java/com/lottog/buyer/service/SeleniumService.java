@@ -132,7 +132,7 @@ public class SeleniumService {
                 );
 
             } catch (TimeoutException e) {
-                log.warn("=== Css selector `{}` not found, retrying... ({}/{})", css, (i + 1), SELENIUM_RETRY_CNT);
+                log.warn("=== [WARNING] Css selector `{}` not found, retrying... ({}/{})", css, (i + 1), SELENIUM_RETRY_CNT);
             }
         }
 
@@ -146,7 +146,6 @@ public class SeleniumService {
     public void execJS(String script) {
         try {
             ((JavascriptExecutor) webDriver).executeScript(script);
-            Thread.sleep(100); //Java script executor 는 적절한 wait 옵션이 없어서 thread sleep 처리
 
         } catch (Exception e) {
             throw new JavascriptException("Java script `" + script + "` execute failed.");
