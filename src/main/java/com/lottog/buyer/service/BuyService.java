@@ -34,7 +34,6 @@ public class BuyService {
     public Integer getBoughtCount() {
         try {
             String css;
-            int pc = 5; //온라인 구매 제한 = 5게임
 
             //당 회차(일요일 ~ 토요일) 구매내역 확인창 오픈
             MessageFormat iframeURL = new MessageFormat(URL_BOUGHT_LIST);
@@ -49,18 +48,18 @@ public class BuyService {
                 if (e.getText().equals("조회 결과가 없습니다.")) break; //구매 내역이 전혀 없다면, loop exit
 
                 String gameResult = e.findElement(By.cssSelector("td:nth-child(6)")).getText(); //당첨결과 column
-                int purchaseCnt = Integer.parseInt(e.findElement(By.cssSelector("td:nth-child(5)")).getText()); //구입매수 column
+                int boughtCount = Integer.parseInt(e.findElement(By.cssSelector("td:nth-child(5)")).getText()); //구입매수 column
 
                 //미추첨 내역은 당 회차 구매내역이므로 잔여 구매가능 매수에서 차감
                 if (gameResult.equals("미추첨")) {
-                    pc -= purchaseCnt;
+                    return boughtCount;
                 }
             }
 
-            return pc;
+            return 0;
 
         } catch (Exception e) {
-            log.error("=== [ERROR] getPurchasableCount() occurred error - {}", e.getMessage());
+            log.error("=== [ERROR] getBoughtCount() occurred error - {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

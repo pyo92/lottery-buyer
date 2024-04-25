@@ -1,8 +1,9 @@
 package com.lottog.buyer.controller;
 
+import com.lottog.buyer.dto.common.Result;
 import com.lottog.buyer.dto.request.BuyRequest;
+import com.lottog.buyer.dto.response.BuyResponse;
 import com.lottog.buyer.dto.response.ErrorResponse;
-import com.lottog.buyer.dto.response.LoginResponse;
 import com.lottog.buyer.service.BuyService;
 import com.lottog.buyer.service.LoginService;
 import com.lottog.buyer.service.SeleniumService;
@@ -30,11 +31,11 @@ public class BuyController {
     public ResponseEntity<?> buy(@RequestBody BuyRequest request) {
         try {
             //로그인 처리
-            LoginResponse loginResponse = loginService.login(request.id());
+            Result loginResult = loginService.login(request.id());
 
             //로그인 실패 시, 결과 반환 처리
-            if (!loginResponse.success()) {
-                return ResponseEntity.ok(loginResponse);
+            if (!loginResult.success()) {
+                return ResponseEntity.ok(BuyResponse.fail(loginResult.message()));
             }
 
             return ResponseEntity.ok(buyService.buy(request));

@@ -1,17 +1,17 @@
 package com.lottog.buyer.controller;
 
+import com.lottog.buyer.dto.common.Result;
 import com.lottog.buyer.dto.request.PaymentRequest;
+import com.lottog.buyer.dto.response.DepositResponse;
 import com.lottog.buyer.dto.response.ErrorResponse;
-import com.lottog.buyer.dto.response.LoginResponse;
-import com.lottog.buyer.service.LoginService;
+import com.lottog.buyer.dto.response.PaymentResponse;
 import com.lottog.buyer.service.DepositService;
+import com.lottog.buyer.service.LoginService;
 import com.lottog.buyer.service.SeleniumService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,19 +29,17 @@ public class DepositController {
     public ResponseEntity<?> getDeposit(String id) {
         try {
             //로그인 처리
-            LoginResponse loginResponse = loginService.login(id);
+            Result loginResult = loginService.login(id);
 
             //로그인 실패 시, 결과 반환 처리
-            if (!loginResponse.success()) {
-                return ResponseEntity.ok(loginResponse);
+            if (!loginResult.success()) {
+                return ResponseEntity.ok(DepositResponse.fail(loginResult.message()));
             }
 
-            Long deposit = depositService.getDeposit();
-
-            return ResponseEntity.ok(Map.of("deposit", deposit));
+            return ResponseEntity.ok(depositService.getDeposit());
 
         } catch (Exception e) {
-            log.error("=== getDeposit() occurred error - {}", e.getMessage());
+            log.error("=== [ERROR] getDeposit() occurred error - {}", e.getMessage());
             ErrorResponse response = ErrorResponse.status500("getDeposit() - 오류가 발생했습니다. (id = " + id + ") - " + e.getMessage());
 
             return ResponseEntity
@@ -58,18 +56,18 @@ public class DepositController {
     public ResponseEntity<?> payment(@RequestBody PaymentRequest request) {
         try {
             //로그인 처리
-            LoginResponse loginResponse = loginService.login(request.id());
+            Result loginResult = loginService.login(request.id());
 
             //로그인 실패 시, 결과 반환 처리
-            if (!loginResponse.success()) {
-                return ResponseEntity.ok(loginResponse);
+            if (!loginResult.success()) {
+                return ResponseEntity.ok(PaymentResponse.fail(loginResult.message()));
             }
 
-            return ResponseEntity.ok(depositService.payment());
+            return ResponseEntity.ok(depositService.payment(request.amount()));
 
         } catch (Exception e) {
-            log.error("=== putDeposit() occurred error - {}", e.getMessage());
-            ErrorResponse response = ErrorResponse.status500("getDeposit() - 오류가 발생했습니다. (id = " + request.id() + ") - " + e.getMessage());
+            log.error("=== [ERROR] payment() occurred error - {}", e.getMessage());
+            ErrorResponse response = ErrorResponse.status500("payment() - 오류가 발생했습니다. (id = " + request.id() + ") - " + e.getMessage());
 
             return ResponseEntity
                     .status(response.status())

@@ -1,5 +1,6 @@
 package com.lottog.buyer.service;
 
+import com.lottog.buyer.dto.response.DepositResponse;
 import com.lottog.buyer.dto.response.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class DepositService {
      * 예치금 잔액 조회
      * @return 예치금
      */
-    public Long getDeposit() {
+    public DepositResponse getDeposit() {
         try {
             String css;
 
@@ -31,12 +32,14 @@ public class DepositService {
             css = "#container > div > div.myinfo_content.account > div.deposit > span > strong";
 
             //예치금 잔액 반환
-            return Long.parseLong(
+            Long deposit = Long.parseLong(
                     seleniumService
                             .getElementByCssSelector(css)
                             .getText()
                             .replaceAll("[^0-9]", "")
             );
+
+            return DepositResponse.ok(deposit);
 
         } catch (Exception e) {
             log.error("=== [ERROR] getDeposit() occurred error - {}", e.getMessage());
@@ -48,7 +51,7 @@ public class DepositService {
      * 예치금 입금 신청
      * @return 입금 신청 결과 DTO (계좌번호 등)
      */
-    public PaymentResponse payment() {
+    public PaymentResponse payment(Long amount) {
         try {
             //예치금 입금 페이지 이동
             seleniumService.openUrl(URL_DEPOSIT_PAYMENT);
@@ -59,7 +62,7 @@ public class DepositService {
 
             css = "#Amt";
             Select amountSelect = new Select(seleniumService.getElementByCssSelector(css));
-            amountSelect.selectByValue("5000"); //회차당 구매가능 게임이 5게임이므로 5000원으로 고정
+            amountSelect.selectByValue(amount.toString());
 
             //예치금 입금 신청
             String js = "nicepayStart();";
@@ -70,9 +73,9 @@ public class DepositService {
             List<WebElement> depositInfo = seleniumService.getElementsByCssSelector(css);
             String accountName = depositInfo.get(2).findElement(By.cssSelector("td")).getText();
             String accountNumber = depositInfo.get(3).findElement(By.cssSelector("td > span")).getText();
-            Long depositAmount = 5000L;
+            amount = Long.parseLong(depositInfo.get(1).findElement(By.cssSelector("td")).getText().replaceAll("[^0-9]", ""));
 
-            return PaymentResponse.of(accountName, accountNumber, depositAmount);
+            return PaymentResponse.ok(accountName, accountNumber, amount);
 
         } catch (Exception e) {
             log.error("=== [ERROR] payment() occurred error - {}", e.getMessage());
