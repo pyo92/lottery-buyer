@@ -1,7 +1,7 @@
 package com.lottog.buyer.service;
 
+import com.lottog.buyer.dto.common.Result;
 import com.lottog.buyer.dto.request.LoginRequest;
-import com.lottog.buyer.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
@@ -27,7 +27,7 @@ public class LoginService {
      * @param request 로그인 request DTO
      * @return 로그인 결과 response DTO
      */
-    public LoginResponse login(LoginRequest request) {
+    public Result login(LoginRequest request) {
         try {
             seleniumService.openWebDriver();
             seleniumService.openUrl(URL_LOGIN);
@@ -50,14 +50,14 @@ public class LoginService {
             seleniumService.execJS(js);
 
             //로그인 결과 반환
-            LoginResponse response = seleniumService.checkLoginResult();
+            Result result = seleniumService.checkLoginResult();
 
             //로그인 성공 시, 로그인 정보 임시 저장
-            if (response.success()) {
+            if (result.success()) {
                 loginInfoMap.put(request.id(), request);
             }
 
-            return response;
+            return result;
 
         } catch (Exception e) {
             log.error("=== [ERROR] doLogin() - {}", e.getMessage());
@@ -70,12 +70,12 @@ public class LoginService {
      * @param id 로그인 id
      * @return 로그인 결과 response DTO
      */
-    public LoginResponse login(String id) {
+    public Result login(String id) {
         //map 에서 id 를 이용해 이전 로그인 정보 조회
         LoginRequest loginRequest = loginInfoMap.get(id);
 
         if (loginRequest == null) {
-            return LoginResponse.fail("로그인 정보가 없습니다.");
+            return Result.fail("로그인 정보가 없습니다.");
         }
 
         return login(loginRequest);

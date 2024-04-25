@@ -1,6 +1,6 @@
 package com.lottog.buyer.service;
 
-import com.lottog.buyer.dto.response.LoginResponse;
+import com.lottog.buyer.dto.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -156,20 +156,20 @@ public class SeleniumService {
      * 동행복권 로그인 결과 체크 (실패 시, alert display = block)
      * @return 로그인 결과 response DTO
      */
-    public LoginResponse checkLoginResult() {
+    public Result checkLoginResult() {
         try {
             //로그인 실패 시, alert message 를 저장하고, accept 처리
             Alert alert = webDriver.switchTo().alert();
-            String result = alert.getText();
+            String message = alert.getText();
             alert.accept();
 
-            return LoginResponse.fail(result);
+            return Result.fail(message);
 
         } catch (Exception e) {
             //로그인 실패 시에만 alert 가 표시된다. (display = block)
             //로그인 성공 시를 대비한 의도적인 empty try-catch block 이다.
         }
 
-        return LoginResponse.ok();
+        return Result.ok();
     }
 }
