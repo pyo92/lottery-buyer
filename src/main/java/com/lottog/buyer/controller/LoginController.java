@@ -1,12 +1,12 @@
 package com.lottog.buyer.controller;
 
+import com.lottog.buyer.dto.common.Result;
 import com.lottog.buyer.dto.request.LoginRequest;
 import com.lottog.buyer.dto.response.ErrorResponse;
 import com.lottog.buyer.dto.response.LoginResponse;
-import com.lottog.buyer.dto.response.UserInfoResponse;
-import com.lottog.buyer.service.LoginService;
+import com.lottog.buyer.service.BuyService;
 import com.lottog.buyer.service.DepositService;
-import com.lottog.buyer.service.PurchasableCountService;
+import com.lottog.buyer.service.LoginService;
 import com.lottog.buyer.service.SeleniumService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,37 +27,36 @@ public class LoginController {
 
     private final DepositService depositService;
 
-    private final PurchasableCountService purchasableCountService;
+    private final BuyService buyService;
 
     @ResponseBody
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             //로그인 처리
-            LoginResponse loginResponse = loginService.login(request);
+            Result loginResult = loginService.login(request);
 
             //로그인 실패 시, 결과 반환 처리
-            if (!loginResponse.success()) {
-                return ResponseEntity.ok(loginResponse);
+            if (!loginResult.success()) {
+                return ResponseEntity.ok(LoginResponse.fail(loginResult.message()));
             }
 
             //사용자 정보 (예치금 잔액, 구매 가능 게임 수) 조회
-            Long deposit = depositService.getDeposit();
-            Integer purchasableCount = purchasableCountService.getPurchasableCount();
+            Long deposit = (Long) depositService.getDeposit()
+                    .data()
+                    .get("deposit");
 
-            UserInfoResponse response;
+            Integer bought = buyService.getBoughtCount();
 
-            if (purchasableCount == 0) {
-                response = UserInfoResponse.fail("더 이상 구매할 수 없습니다.", deposit, purchasableCount);
-            } else {
-                response = UserInfoResponse.ok(deposit, purchasableCount);
+            if (bought == 5) {
+                return ResponseEntity.ok(LoginResponse.fail("더 이상 구매할 수 없습니다.", bought));
             }
 
             //결과 반환
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(LoginResponse.ok(deposit, bought));
 
         } catch (Exception e) {
-            log.error("=== login() occurred error - {}", e.getMessage());
+            log.error("=== [ERROR] login() occurred error - {}", e.getMessage());
             ErrorResponse response = ErrorResponse.status500("login() - 오류가 발생했습니다. (id = " + request.id() + ") - " + e.getMessage());
 
             return ResponseEntity
